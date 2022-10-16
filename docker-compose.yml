@@ -9,9 +9,10 @@ services:
         ports:
             - 8080:8080
         networks:
-            - db-net
+            - home-gatway
         depends_on:
             - db
+            - mosquitto
     db:
         image: mysql:8.0.20
         command: mysqld --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
@@ -22,17 +23,20 @@ services:
         environment:
             MYSQL_ROOT_PASSWORD: root
         networks:
-            - db-net
+            - home-gatway
         ports:
             - 8086:3306
     mosquitto:
-      image: eclipse-mosquitto
-      restart: always
-      ports: 
-        - 1883:1883
-        - 9001:9001
-      volumes:  
-      - ./mosquitto/data:/mosquitto/data
-      - ./mosquitto/log:/mosquitto/log
+        image: eclipse-mosquitto
+        restart: always
+        ports: 
+            - 1883:1883
+            - 9001:9001
+        volumes:  
+            - ./mosquitto/data:/mosquitto/data
+            - ./mosquitto/log:/mosquitto/log
+        networks:
+            - home-gatway
+
 networks:
-    db-net:
+    home-gatway:
